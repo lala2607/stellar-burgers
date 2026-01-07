@@ -1,25 +1,36 @@
-import { FC, useMemo } from 'react';
+import { FC, useMemo, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { useSelector, useDispatch } from '../../services/store';
+import { getOrder, getOrderLoading, getIngredients, getIngredientsLoading } from '../../services/selectors';
+import { fetchOrderByNumber } from '../../services/slices/orderSlice';
+import { fetchIngredients } from '../../services/slices/ingredientsSlice';
 import { Preloader } from '../ui/preloader';
 import { OrderInfoUI } from '../ui/order-info';
 import { TIngredient } from '@utils-types';
 
 export const OrderInfo: FC = () => {
-  /** TODO: взять переменные orderData и ingredients из стора */
-  const orderData = {
-    createdAt: '',
-    ingredients: [],
-    _id: '',
-    status: '',
-    name: '',
-    updatedAt: 'string',
-    number: 0
-  };
+const { number } = useParams<{ number: string }>();
+const dispatch = useDispatch();
+const orderData = useSelector(getOrder);
+const isLoading = useSelector(getOrderLoading);
+const ingredients = useSelector(getIngredients);
+const isIngredientsLoading = useSelector(getIngredientsLoading);
 
-  const ingredients: TIngredient[] = [];
+useEffect(() => {
+  if (number) {
+    dispatch(fetchOrderByNumber(Number(number)));
+  }
+}, [dispatch, number]);
 
-  /* Готовим данные для отображения */
+useEffect(() => {
+  if (!ingredients.length && !isIngredientsLoading) {
+    dispatch(fetchIngredients());
+  }
+}, [dispatch, ingredients.length, isIngredientsLoading]);
+
   const orderInfo = useMemo(() => {
-    if (!orderData || !ingredients.length) return null;
+    if (!orderData || !ingredients.length || isLoading || isIngredientsLoading)
+      return null;
 
     const date = new Date(orderData.createdAt);
 
@@ -57,9 +68,9 @@ export const OrderInfo: FC = () => {
       date,
       total
     };
-  }, [orderData, ingredients]);
+  }, [orderData, ingredients, isLoading, isIngredientsLoading]);
 
-  if (!orderInfo) {
+  if (isLoading || isIngredientsLoading || !orderInfo) {
     return <Preloader />;
   }
 
