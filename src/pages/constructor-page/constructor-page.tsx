@@ -1,5 +1,8 @@
 import { useSelector, useDispatch } from '../../services/store';
-import {getIngredientsLoading,getIngredients} from '../../services/selectors';
+import {
+  getIngredientsLoading,
+  getIngredients
+} from '../../services/selectors';
 import { fetchIngredients } from '../../services/slices/ingredientsSlice';
 import { useEffect } from 'react';
 
@@ -11,19 +14,19 @@ import { Preloader } from '../../components/ui';
 import { FC } from 'react';
 
 export const ConstructorPage: FC = () => {
-const dispatch = useDispatch();
-const [isIngredientsLoading, ingredients] = [
-  useSelector(getIngredientsLoading),
-  useSelector(getIngredients)
-];
+  const dispatch = useDispatch();
+  const [isIngredientsLoading, ingredients] = [
+    useSelector(getIngredientsLoading),
+    useSelector(getIngredients)
+  ];
 
-const shouldLoadIngredients = true; 
+  const shouldLoadIngredients = true;
 
-useEffect(() => {
-  if (shouldLoadIngredients) {
-    dispatch(fetchIngredients());
-  }
-}, [dispatch, shouldLoadIngredients]);
+  useEffect(() => {
+    if (shouldLoadIngredients) {
+      dispatch(fetchIngredients());
+    }
+  }, [dispatch, shouldLoadIngredients]);
 
   return (
     <>

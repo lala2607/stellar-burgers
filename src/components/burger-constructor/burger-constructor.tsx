@@ -1,8 +1,16 @@
 import { FC, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from '../../services/store';
-import { getConstructorItems, getOrderRequest, getOrderModalData, getIsAuthenticated } from '../../services/selectors';
-import { createOrder, clearOrderModal } from '../../services/slices/orderModalSlice';
+import {
+  getConstructorItems,
+  getOrderRequest,
+  getOrderModalData,
+  getIsAuthenticated
+} from '../../services/selectors';
+import {
+  createOrder,
+  clearOrderModal
+} from '../../services/slices/orderModalSlice';
 import { clearConstructor } from '../../services/slices/burgerConstructorSlice';
 import { TConstructorIngredient } from '@utils-types';
 import { BurgerConstructorUI } from '@ui';
@@ -15,19 +23,18 @@ export const BurgerConstructor: FC = () => {
   const orderModalData = useSelector(getOrderModalData);
   const isAuthenticated = useSelector(getIsAuthenticated);
   const canCreateOrder = constructorItems.bun && !orderRequest;
-  const orderIngredients = constructorItems.bun 
+  const orderIngredients = constructorItems.bun
     ? [
         constructorItems.bun._id,
-        ...constructorItems.ingredients.map(i => i._id),
+        ...constructorItems.ingredients.map((i) => i._id),
         constructorItems.bun._id
       ]
     : [];
 
-  const redirectToLogin = () => 
+  const redirectToLogin = () =>
     navigate('/login', { state: { from: { pathname: '/' } } });
 
-  const processOrderCreation = () => 
-    dispatch(createOrder(orderIngredients));
+  const processOrderCreation = () => dispatch(createOrder(orderIngredients));
 
   const onOrderClick = () => {
     if (!canCreateOrder) return;

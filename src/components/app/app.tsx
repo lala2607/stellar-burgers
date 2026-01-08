@@ -2,101 +2,142 @@ import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useDispatch } from '../../services/store';
 import { checkUserAuth } from '../../services/slices/authSlice';
-import { ConstructorPage, Feed, Login, Register, ForgotPassword, ResetPassword, Profile, ProfileOrders, NotFound404 } from '@pages';
-import { AppHeader, Modal, OrderInfo, IngredientDetails, ProtectedRoute } from '@components';
+import {
+  ConstructorPage,
+  Feed,
+  Login,
+  Register,
+  ForgotPassword,
+  ResetPassword,
+  Profile,
+  ProfileOrders,
+  NotFound404
+} from '@pages';
+import {
+  AppHeader,
+  Modal,
+  OrderInfo,
+  IngredientDetails,
+  ProtectedRoute
+} from '@components';
 import '../../index.css';
 import styles from './app.module.css';
 
 const App = () => {
+  const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { pathname, state } = useLocation();
-  const background = state?.background;
+  const background = location.state?.background;
 
-  const closeModal = () => navigate(-1);
+  const handleModalClose = () => {
+    navigate(-1);
+  };
 
   useEffect(() => {
     dispatch(checkUserAuth());
   }, [dispatch]);
 
   useEffect(() => {
-    const shouldHideOverflow = !!background;
-    document.body.style.overflow = shouldHideOverflow ? 'hidden' : 'unset';
-    
-    return () => {
+    if (background) {
+      document.body.style.overflow = 'hidden';
+    } else {
       document.body.style.overflow = 'unset';
-    };
+    }
   }, [background]);
-
-  const renderProtectedRoute = (element: JSX.Element, onlyUnAuth = false) => (
-    <ProtectedRoute onlyUnAuth={onlyUnAuth}>
-      {element}
-    </ProtectedRoute>
-  );
-
-  const renderModalRoute = (path: string, element: JSX.Element, title = '') => (
-    <Route
-      path={path}
-      element={
-        <Modal title={title} onClose={closeModal}>
-          {element}
-        </Modal>
-      }
-    />
-  );
 
   return (
     <div className={styles.app}>
       <AppHeader />
-      
-      <Routes location={background || { pathname, state }}>
-        <Route index element={<ConstructorPage />} />
+      <Routes location={background || location}>
+        <Route path='/' element={<ConstructorPage />} />
         <Route path='/feed' element={<Feed />} />
-        
+        <Route path='/feed/:number' element={<OrderInfo />} />
+        <Route path='/ingredients/:id' element={<IngredientDetails />} />
         <Route
           path='/login'
-          element={renderProtectedRoute(<Login />, true)}
+          element={
+            <ProtectedRoute onlyUnAuth>
+              <Login />
+            </ProtectedRoute>
+          }
         />
         <Route
           path='/register'
-          element={renderProtectedRoute(<Register />, true)}
+          element={
+            <ProtectedRoute onlyUnAuth>
+              <Register />
+            </ProtectedRoute>
+          }
         />
         <Route
           path='/forgot-password'
-          element={renderProtectedRoute(<ForgotPassword />, true)}
+          element={
+            <ProtectedRoute onlyUnAuth>
+              <ForgotPassword />
+            </ProtectedRoute>
+          }
         />
         <Route
           path='/reset-password'
-          element={renderProtectedRoute(<ResetPassword />, true)}
+          element={
+            <ProtectedRoute onlyUnAuth>
+              <ResetPassword />
+            </ProtectedRoute>
+          }
         />
         <Route
           path='/profile'
-          element={renderProtectedRoute(<Profile />)}
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
         />
         <Route
           path='/profile/orders'
-          element={renderProtectedRoute(<ProfileOrders />)}
+          element={
+            <ProtectedRoute>
+              <ProfileOrders />
+            </ProtectedRoute>
+          }
         />
-        
+        <Route
+          path='/profile/orders/:number'
+          element={
+            <ProtectedRoute>
+              <OrderInfo />
+            </ProtectedRoute>
+          }
+        />
         <Route path='*' element={<NotFound404 />} />
       </Routes>
 
       {background && (
         <Routes>
-          {renderModalRoute('/feed/:number', <OrderInfo />)}
-          {renderModalRoute(
-            '/ingredients/:id', 
-            <IngredientDetails />, 
-            'Детали ингредиента'
-          )}
+          <Route
+            path='/feed/:number'
+            element={
+              <Modal title='' onClose={handleModalClose}>
+                <OrderInfo />
+              </Modal>
+            }
+          />
+          <Route
+            path='/ingredients/:id'
+            element={
+              <Modal title='Детали ингредиента' onClose={handleModalClose}>
+                <IngredientDetails />
+              </Modal>
+            }
+          />
           <Route
             path='/profile/orders/:number'
             element={
-              renderProtectedRoute(
-                <Modal title='' onClose={closeModal}>
+              <ProtectedRoute>
+                <Modal title='' onClose={handleModalClose}>
                   <OrderInfo />
                 </Modal>
-              )
+              </ProtectedRoute>
             }
           />
         </Routes>

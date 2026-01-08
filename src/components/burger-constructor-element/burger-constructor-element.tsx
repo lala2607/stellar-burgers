@@ -1,6 +1,9 @@
 import { FC, memo } from 'react';
 import { useDispatch } from '../../services/store';
-import { removeIngredient, moveIngredient } from '../../services/slices/burgerConstructorSlice';
+import {
+  removeIngredient,
+  moveIngredient
+} from '../../services/slices/burgerConstructorSlice';
 import { BurgerConstructorElementUI } from '@ui';
 import { BurgerConstructorElementProps } from './type';
 
@@ -19,17 +22,17 @@ export const BurgerConstructorElement: FC<BurgerConstructorElementProps> = memo(
       }
     };
 
-    const createMoveHandler = (targetIndex: number) => 
-      () => dispatch(moveIngredient({ dragIndex: index, hoverIndex: targetIndex }));
+    const createMoveHandler = (targetIndex: number) => () =>
+      dispatch(moveIngredient({ dragIndex: index, hoverIndex: targetIndex }));
 
     const handleRemove = () => dispatch(removeIngredient(ingredient.id));
 
     const handlers = {
-      handleMoveDown: actionConfig.moveDown.isEnabled 
-        ? createMoveHandler(actionConfig.moveDown.targetIndex) 
+      handleMoveDown: actionConfig.moveDown.isEnabled
+        ? createMoveHandler(actionConfig.moveDown.targetIndex)
         : () => {},
-      handleMoveUp: actionConfig.moveUp.isEnabled 
-        ? createMoveHandler(actionConfig.moveUp.targetIndex) 
+      handleMoveUp: actionConfig.moveUp.isEnabled
+        ? createMoveHandler(actionConfig.moveUp.targetIndex)
         : () => {},
       handleClose: handleRemove
     };

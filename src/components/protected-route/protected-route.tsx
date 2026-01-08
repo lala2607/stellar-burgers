@@ -11,15 +11,16 @@ type TProtectedRouteProps = {
 const ProtectedRoute: FC<TProtectedRouteProps> = ({
   children,
   onlyUnAuth = false
-}) => {
-  return onlyUnAuth ? (
+}) =>
+  onlyUnAuth ? (
     <UnauthenticatedOnlyRoute>{children}</UnauthenticatedOnlyRoute>
   ) : (
     <AuthenticatedOnlyRoute>{children}</AuthenticatedOnlyRoute>
   );
-};
 
-const AuthenticatedOnlyRoute: FC<{ children: ReactElement }> = ({ children }) => {
+const AuthenticatedOnlyRoute: FC<{ children: ReactElement }> = ({
+  children
+}) => {
   const location = useLocation();
   const isAuthenticated = useSelector(getIsAuthenticated);
 
@@ -30,7 +31,9 @@ const AuthenticatedOnlyRoute: FC<{ children: ReactElement }> = ({ children }) =>
   return children;
 };
 
-const UnauthenticatedOnlyRoute: FC<{ children: ReactElement }> = ({ children }) => {
+const UnauthenticatedOnlyRoute: FC<{ children: ReactElement }> = ({
+  children
+}) => {
   const location = useLocation();
   const isAuthenticated = useSelector(getIsAuthenticated);
 

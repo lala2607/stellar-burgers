@@ -26,29 +26,28 @@ export const Profile: FC = () => {
     formValue.name !== user?.name ||
     formValue.email !== user?.email ||
     !!formValue.password;
-const handleSubmit = async (e: SyntheticEvent) => {
-  e.preventDefault();
-  
-  try {
-    const updateData = {
-      ...(formValue.name !== user?.name && { name: formValue.name }),
-      ...(formValue.email !== user?.email && { email: formValue.email }),
-      ...(formValue.password && { password: formValue.password })
-    };
+  const handleSubmit = async (e: SyntheticEvent) => {
+    e.preventDefault();
 
-    if (Object.keys(updateData).length === 0) {
-      return;
+    try {
+      const updateData = {
+        ...(formValue.name !== user?.name && { name: formValue.name }),
+        ...(formValue.email !== user?.email && { email: formValue.email }),
+        ...(formValue.password && { password: formValue.password })
+      };
+
+      if (Object.keys(updateData).length === 0) {
+        return;
+      }
+
+      await updateUserApi(updateData);
+      dispatch(checkUserAuth());
+
+      setFormValue((prev) => ({ ...prev, password: '' }));
+    } catch (error) {
+      console.error('Ошибка обновления профиля:', error);
     }
-    
-    await updateUserApi(updateData);
-    dispatch(checkUserAuth());
-
-    setFormValue(prev => ({ ...prev, password: '' }));
-    
-  } catch (error) {
-    console.error('Ошибка обновления профиля:', error);
-  }
-};
+  };
 
   const handleCancel = (e: SyntheticEvent) => {
     e.preventDefault();

@@ -52,5 +52,6 @@ const ingredientsSlice = createSlice({
 });
 
 // Экспорт новых редьюсеров
-export const { clearIngredientsError, setIngredientsLoading } = ingredientsSlice.actions;
+export const { clearIngredientsError, setIngredientsLoading } =
+  ingredientsSlice.actions;
 export default ingredientsSlice.reducer;

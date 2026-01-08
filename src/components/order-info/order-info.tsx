@@ -1,7 +1,12 @@
 import { FC, useMemo, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from '../../services/store';
-import { getOrder, getOrderLoading, getIngredients, getIngredientsLoading } from '../../services/selectors';
+import {
+  getOrder,
+  getOrderLoading,
+  getIngredients,
+  getIngredientsLoading
+} from '../../services/selectors';
 import { fetchOrderByNumber } from '../../services/slices/orderSlice';
 import { fetchIngredients } from '../../services/slices/ingredientsSlice';
 import { Preloader } from '../ui/preloader';
@@ -9,24 +14,24 @@ import { OrderInfoUI } from '../ui/order-info';
 import { TIngredient } from '@utils-types';
 
 export const OrderInfo: FC = () => {
-const { number } = useParams<{ number: string }>();
-const dispatch = useDispatch();
-const orderData = useSelector(getOrder);
-const isLoading = useSelector(getOrderLoading);
-const ingredients = useSelector(getIngredients);
-const isIngredientsLoading = useSelector(getIngredientsLoading);
+  const { number } = useParams<{ number: string }>();
+  const dispatch = useDispatch();
+  const orderData = useSelector(getOrder);
+  const isLoading = useSelector(getOrderLoading);
+  const ingredients = useSelector(getIngredients);
+  const isIngredientsLoading = useSelector(getIngredientsLoading);
 
-useEffect(() => {
-  if (number) {
-    dispatch(fetchOrderByNumber(Number(number)));
-  }
-}, [dispatch, number]);
+  useEffect(() => {
+    if (number) {
+      dispatch(fetchOrderByNumber(Number(number)));
+    }
+  }, [dispatch, number]);
 
-useEffect(() => {
-  if (!ingredients.length && !isIngredientsLoading) {
-    dispatch(fetchIngredients());
-  }
-}, [dispatch, ingredients.length, isIngredientsLoading]);
+  useEffect(() => {
+    if (!ingredients.length && !isIngredientsLoading) {
+      dispatch(fetchIngredients());
+    }
+  }, [dispatch, ingredients.length, isIngredientsLoading]);
 
   const orderInfo = useMemo(() => {
     if (!orderData || !ingredients.length || isLoading || isIngredientsLoading)

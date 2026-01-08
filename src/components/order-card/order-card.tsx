@@ -1,7 +1,10 @@
 import { FC, memo, useMemo, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from '../../services/store';
-import { getIngredients, getIngredientsLoading } from '../../services/selectors';
+import {
+  getIngredients,
+  getIngredientsLoading
+} from '../../services/selectors';
 import { fetchIngredients } from '../../services/slices/ingredientsSlice';
 import { OrderCardProps } from './type';
 import { TIngredient } from '@utils-types';
@@ -15,7 +18,8 @@ export const OrderCard: FC<OrderCardProps> = memo(({ order }) => {
   const ingredients = useSelector(getIngredients);
   const isIngredientsLoading = useSelector(getIngredientsLoading);
 
-  const shouldLoadIngredients = ingredients.length === 0 && !isIngredientsLoading;
+  const shouldLoadIngredients =
+    ingredients.length === 0 && !isIngredientsLoading;
 
   useEffect(() => {
     if (shouldLoadIngredients) {

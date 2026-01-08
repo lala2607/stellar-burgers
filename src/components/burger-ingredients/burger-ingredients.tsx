@@ -6,31 +6,31 @@ import { TTabMode, TIngredient } from '@utils-types';
 import { BurgerIngredientsUI } from '../ui/burger-ingredients';
 
 export const BurgerIngredients: FC = () => {
-const ingredients = useSelector(getIngredients);
+  const ingredients = useSelector(getIngredients);
 
-const { buns, mains, sauces } = useMemo(() => {
-  const groups = {
-    buns: [] as TIngredient[],
-    mains: [] as TIngredient[],
-    sauces: [] as TIngredient[]
-  };
-  
-  ingredients.forEach(ingredient => {
-    switch (ingredient.type) {
-      case 'bun':
-        groups.buns.push(ingredient);
-        break;
-      case 'main':
-        groups.mains.push(ingredient);
-        break;
-      case 'sauce':
-        groups.sauces.push(ingredient);
-        break;
-    }
-  });
-  
-  return groups;
-}, [ingredients]);
+  const { buns, mains, sauces } = useMemo(() => {
+    const groups = {
+      buns: [] as TIngredient[],
+      mains: [] as TIngredient[],
+      sauces: [] as TIngredient[]
+    };
+
+    ingredients.forEach((ingredient) => {
+      switch (ingredient.type) {
+        case 'bun':
+          groups.buns.push(ingredient);
+          break;
+        case 'main':
+          groups.mains.push(ingredient);
+          break;
+        case 'sauce':
+          groups.sauces.push(ingredient);
+          break;
+      }
+    });
+
+    return groups;
+  }, [ingredients]);
 
   const [currentTab, setCurrentTab] = useState<TTabMode>('bun');
   const titleBunRef = useRef<HTMLHeadingElement>(null);

@@ -26,14 +26,14 @@ const constructorSlice = createSlice({
         state.ingredients.push(ingredient as TConstructorIngredient);
       }
     },
-    
+
     removeIngredient: (state, action: PayloadAction<string>) => {
       const ingredientId = action.payload;
       state.ingredients = state.ingredients.filter(
         (item) => item.id !== ingredientId
       );
     },
-    
+
     moveIngredient: (
       state,
       action: PayloadAction<{ dragIndex: number; hoverIndex: number }>
@@ -44,7 +44,7 @@ const constructorSlice = createSlice({
       updatedIngredients.splice(hoverIndex, 0, draggedItem);
       state.ingredients = updatedIngredients;
     },
-    
+
     clearConstructor: (state) => {
       state.bun = null;
       state.ingredients = [];

@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { TUser } from '@utils-types';
 import {
   loginUserApi,
@@ -24,23 +24,34 @@ export const initialState: AuthState = {
   isAuthenticated: !!getCookie('accessToken')
 };
 
-const handleAuthSuccess = (response: any) => {
-  const token = response.accessToken.startsWith('Bearer ')
-    ? response.accessToken.split('Bearer ')[1]
-    : response.accessToken;
-  
-  setCookie('accessToken', token, { expires: 1200 });
-  localStorage.setItem('refreshToken', response.refreshToken);
-  
-  return response.user;
-};
+interface AuthResponse {
+  success: boolean;
+  user: TUser;
+  accessToken: string;
+  refreshToken: string;
+}
+
+interface UserResponse {
+  success: boolean;
+  user: TUser;
+}
 
 export const loginUser = createAsyncThunk(
   'auth/login',
-  async (data: TLoginData) => {
+  async (data: TLoginData): Promise<TUser> => {
     const response = await loginUserApi(data);
     if (response.success) {
-      return handleAuthSuccess(response);
+      const token = (response as AuthResponse).accessToken.startsWith('Bearer ')
+        ? (response as AuthResponse).accessToken.split('Bearer ')[1]
+        : (response as AuthResponse).accessToken;
+
+      setCookie('accessToken', token, { expires: 1200 });
+      localStorage.setItem(
+        'refreshToken',
+        (response as AuthResponse).refreshToken
+      );
+
+      return (response as AuthResponse).user;
     }
     throw new Error('Ошибка авторизации');
   }
@@ -48,10 +59,20 @@ export const loginUser = createAsyncThunk(
 
 export const registerUser = createAsyncThunk(
   'auth/register',
-  async (data: TRegisterData) => {
+  async (data: TRegisterData): Promise<TUser> => {
     const response = await registerUserApi(data);
     if (response.success) {
-      return handleAuthSuccess(response);
+      const token = (response as AuthResponse).accessToken.startsWith('Bearer ')
+        ? (response as AuthResponse).accessToken.split('Bearer ')[1]
+        : (response as AuthResponse).accessToken;
+
+      setCookie('accessToken', token, { expires: 1200 });
+      localStorage.setItem(
+        'refreshToken',
+        (response as AuthResponse).refreshToken
+      );
+
+      return (response as AuthResponse).user;
     }
     throw new Error('Ошибка регистрации');
   }
@@ -63,17 +84,28 @@ export const logoutUser = createAsyncThunk('auth/logout', async () => {
   localStorage.removeItem('refreshToken');
 });
 
-export const checkUserAuth = createAsyncThunk('auth/checkUser', async () => {
-  const accessToken = getCookie('accessToken');
-  if (!accessToken) {
-    throw new Error('Пользователь не авторизован');
+export const checkUserAuth = createAsyncThunk(
+  'auth/checkUser',
+  async (): Promise<TUser> => {
+    const accessToken = getCookie('accessToken');
+    if (!accessToken) {
+      // Очищаем токены при отсутствии accessToken
+      deleteCookie('accessToken');
+      localStorage.removeItem('refreshToken');
+      throw new Error('Пользователь не авторизован');
+    }
+
+    const response = await getUserApi();
+    if (response.success) {
+      return (response as UserResponse).user;
+    }
+
+    // Очищаем токены при ошибке получения данных пользователя
+    deleteCookie('accessToken');
+    localStorage.removeItem('refreshToken');
+    throw new Error('Ошибка получения данных пользователя');
   }
-  const response = await getUserApi();
-  if (response.success) {
-    return response.user;
-  }
-  throw new Error('Ошибка получения данных пользователя');
-});
+);
 
 const authSlice = createSlice({
   name: 'auth',
@@ -89,13 +121,20 @@ const authSlice = createSlice({
       state.error = null;
     };
 
-    const handleFulfilled = (state: AuthState, action: any) => {
+    const handleFulfilled = (
+      state: AuthState,
+      action: PayloadAction<TUser>
+    ) => {
       state.isLoading = false;
       state.user = action.payload;
       state.isAuthenticated = true;
     };
 
-    const handleRejected = (state: AuthState, action: any, defaultError: string) => {
+    const handleRejected = (
+      state: AuthState,
+      action: { error: { message?: string } },
+      defaultError: string
+    ) => {
       state.isLoading = false;
       state.error = action.error.message || defaultError;
       state.isAuthenticated = false;
@@ -119,17 +158,12 @@ const authSlice = createSlice({
       .addCase(checkUserAuth.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(checkUserAuth.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.user = action.payload;
-        state.isAuthenticated = true;
-      })
+      .addCase(checkUserAuth.fulfilled, handleFulfilled)
       .addCase(checkUserAuth.rejected, (state) => {
         state.isLoading = false;
         state.user = null;
         state.isAuthenticated = false;
-        deleteCookie('accessToken');
-        localStorage.removeItem('refreshToken');
+        // Здесь больше нет побочных эффектов - они уже выполнены в thunk'е
       });
   }
 });

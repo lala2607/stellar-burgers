@@ -16,11 +16,11 @@ export const initialState: UserState = {
 
 export const fetchUser = createAsyncThunk('user/fetchUser', async () => {
   const response = await getUserApi();
-  
+
   if (response.success) {
     return response.user;
   }
-  
+
   throw new Error('Ошибка получения данных пользователя');
 });
 
@@ -47,7 +47,8 @@ const userSlice = createSlice({
       })
       .addCase(fetchUser.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.error.message || 'Ошибка загрузки данных пользователя';
+        state.error =
+          action.error.message || 'Ошибка загрузки данных пользователя';
       });
   }
 });

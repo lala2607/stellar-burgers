@@ -11,26 +11,26 @@ const getOrders = (orders: TOrder[], status: string): number[] =>
     .slice(0, 20);
 
 export const FeedInfo: FC = () => {
-const feeds = useSelector(getFeeds);
-const orders = feeds?.orders || [];
+  const feeds = useSelector(getFeeds);
+  const orders = feeds?.orders || [];
 
-const { readyOrders, pendingOrders, feed } = useMemo(() => {
-  if (!feeds) {
+  const { readyOrders, pendingOrders, feed } = useMemo(() => {
+    if (!feeds) {
+      return {
+        readyOrders: [],
+        pendingOrders: [],
+        feed: { total: 0, totalToday: 0 }
+      };
+    }
+
+    const { total, totalToday } = feeds;
+
     return {
-      readyOrders: [],
-      pendingOrders: [],
-      feed: { total: 0, totalToday: 0 }
+      readyOrders: getOrders(orders, 'done'),
+      pendingOrders: getOrders(orders, 'pending'),
+      feed: { total, totalToday }
     };
-  }
-
-  const { total, totalToday } = feeds;
-  
-  return {
-    readyOrders: getOrders(orders, 'done'),
-    pendingOrders: getOrders(orders, 'pending'),
-    feed: { total, totalToday }
-  };
-}, [feeds, orders]);
+  }, [feeds, orders]);
 
   return (
     <FeedInfoUI

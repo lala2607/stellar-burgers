@@ -31,16 +31,13 @@ export const FeedInfoUI: FC<FeedInfoUIProps> = memo(
 
 const HalfColumn: FC<HalfColumnProps> = ({ orders, title, textColor }) => {
   const baseClasses = `text text_type_digits-default ${styles.list_item}`;
-  const colorClass = textColor === 'blue' 
-    ? styles.list_item_blue 
-    : styles.list_item_white;
+  const colorClass =
+    textColor === 'blue' ? styles.list_item_blue : styles.list_item_white;
   const listItemClasses = `${baseClasses} ${colorClass}`;
 
   return (
     <div className={`pr-6 ${styles.column}`}>
-      <h3 className={`text text_type_main-medium ${styles.title}`}>
-        {title}:
-      </h3>
+      <h3 className={`text text_type_main-medium ${styles.title}`}>{title}:</h3>
       <ul className={`pt-6 ${styles.list}`}>
         {orders.map((item, index) => (
           <li className={listItemClasses} key={index}>

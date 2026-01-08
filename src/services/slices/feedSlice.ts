@@ -39,7 +39,8 @@ const feedsSlice = createSlice({
       })
       .addCase(fetchFeeds.rejected, (state, action) => {
         state.isLoading = false;
-        const errorMessage = action.error.message || 'Ошибка загрузки ленты заказов';
+        const errorMessage =
+          action.error.message || 'Ошибка загрузки ленты заказов';
         state.error = errorMessage;
       });
   }

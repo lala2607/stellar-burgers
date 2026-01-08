@@ -18,13 +18,14 @@ export const fetchOrderByNumber = createAsyncThunk(
   'order/fetchOrderByNumber',
   async (number: number) => {
     const response = await getOrderByNumberApi(number);
-    
-    const hasValidData = response.success && response.orders && response.orders.length > 0;
-    
+
+    const hasValidData =
+      response.success && response.orders && response.orders.length > 0;
+
     if (hasValidData) {
       return response.orders[0];
     }
-    
+
     throw new Error('Заказ не найден');
   }
 );

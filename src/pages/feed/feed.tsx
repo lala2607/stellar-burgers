@@ -6,17 +6,17 @@ import { getFeeds, getFeedsLoading } from '../../services/selectors';
 import { fetchFeeds } from '../../services/slices/feedSlice';
 
 export const Feed: FC = () => {
-const dispatch = useDispatch();
-const feeds = useSelector(getFeeds);
-const isLoading = useSelector(getFeedsLoading);
+  const dispatch = useDispatch();
+  const feeds = useSelector(getFeeds);
+  const isLoading = useSelector(getFeedsLoading);
 
-const loadFeedsData = () => dispatch(fetchFeeds());
+  const loadFeedsData = () => dispatch(fetchFeeds());
 
-const handleGetFeeds = loadFeedsData;
+  const handleGetFeeds = loadFeedsData;
 
-useEffect(() => {
-  loadFeedsData();
-}, [dispatch]);
+  useEffect(() => {
+    loadFeedsData();
+  }, [dispatch]);
 
   if (isLoading || !feeds) {
     return <Preloader />;

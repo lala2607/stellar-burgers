@@ -2,44 +2,48 @@ import { FC, SyntheticEvent, useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from '../../services/store';
 import { loginUser, clearError } from '../../services/slices/authSlice';
-import {getAuthError,getAuthLoading,getIsAuthenticated} from '../../services/selectors';
+import {
+  getAuthError,
+  getAuthLoading,
+  getIsAuthenticated
+} from '../../services/selectors';
 import { LoginUI } from '@ui-pages';
 
 export const Login: FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-const useAuthActions = () => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const location = useLocation();
-  
-  return { dispatch, navigate, location };
-};
+  const useAuthActions = () => {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const location = useLocation();
 
-const useAuthInfo = () => {
-  const error = useSelector(getAuthError);
-  const isLoading = useSelector(getAuthLoading);
-  const isAuthenticated = useSelector(getIsAuthenticated);
-  
-  return { error, isLoading, isAuthenticated };
-};
+    return { dispatch, navigate, location };
+  };
 
-const { dispatch, navigate, location } = useAuthActions();
-const { error, isLoading, isAuthenticated } = useAuthInfo();
+  const useAuthInfo = () => {
+    const error = useSelector(getAuthError);
+    const isLoading = useSelector(getAuthLoading);
+    const isAuthenticated = useSelector(getIsAuthenticated);
 
-useEffect(() => {
-  if (isAuthenticated) {
-    const from = location.state?.from?.pathname || '/';
-    navigate(from, { replace: true });
-  }
-}, [isAuthenticated, navigate, location]);
+    return { error, isLoading, isAuthenticated };
+  };
 
-const handleSubmit = (e: SyntheticEvent) => {
-  e.preventDefault();
-  dispatch(clearError());
-  dispatch(loginUser({ email, password }));
-};
+  const { dispatch, navigate, location } = useAuthActions();
+  const { error, isLoading, isAuthenticated } = useAuthInfo();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      const from = location.state?.from?.pathname || '/';
+      navigate(from, { replace: true });
+    }
+  }, [isAuthenticated, navigate, location]);
+
+  const handleSubmit = (e: SyntheticEvent) => {
+    e.preventDefault();
+    dispatch(clearError());
+    dispatch(loginUser({ email, password }));
+  };
 
   return (
     <LoginUI

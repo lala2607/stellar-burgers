@@ -1,6 +1,9 @@
 import React, { FC, memo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { CurrencyIcon, FormattedDate } from '@zlden/react-developer-burger-ui-components';
+import {
+  CurrencyIcon,
+  FormattedDate
+} from '@zlden/react-developer-burger-ui-components';
 import styles from './order-card.module.css';
 import { OrderCardUIProps } from './type';
 import { OrderStatus } from '@components';
@@ -10,7 +13,7 @@ export const OrderCardUI: FC<OrderCardUIProps> = memo(
     const location = useLocation();
     const isProfileOrdersPage = location.pathname === '/profile/orders';
     const orderNumber = String(orderInfo.number).padStart(6, '0');
-    
+
     return (
       <Link
         to={orderInfo.number.toString()}
@@ -26,23 +29,22 @@ export const OrderCardUI: FC<OrderCardUIProps> = memo(
             <FormattedDate date={orderInfo.date} />
           </span>
         </div>
-        
+
         <h4 className={`pt-6 text text_type_main-medium ${styles.order_name}`}>
           {orderInfo.name}
         </h4>
-        
-        {isProfileOrdersPage && (
-          <OrderStatus status={orderInfo.status} />
-        )}
-        
+
+        {isProfileOrdersPage && <OrderStatus status={orderInfo.status} />}
+
         <div className={`pt-6 ${styles.order_content}`}>
           <ul className={styles.ingredients}>
             {orderInfo.ingredientsToShow.map((ingredient, index) => {
               const zIndex = maxIngredients - index;
               const right = 20 * index;
               const isLastVisibleIngredient = maxIngredients === index + 1;
-              const shouldShowRemains = isLastVisibleIngredient && orderInfo.remains > 0;
-              
+              const shouldShowRemains =
+                isLastVisibleIngredient && orderInfo.remains > 0;
+
               return (
                 <li
                   className={styles.img_wrap}
@@ -51,14 +53,19 @@ export const OrderCardUI: FC<OrderCardUIProps> = memo(
                 >
                   <img
                     style={{
-                      opacity: orderInfo.remains && isLastVisibleIngredient ? '0.5' : '1'
+                      opacity:
+                        orderInfo.remains && isLastVisibleIngredient
+                          ? '0.5'
+                          : '1'
                     }}
                     className={styles.img}
                     src={ingredient.image_mobile}
                     alt={ingredient.name}
                   />
                   {shouldShowRemains && (
-                    <span className={`text text_type_digits-default ${styles.remains}`}>
+                    <span
+                      className={`text text_type_digits-default ${styles.remains}`}
+                    >
                       +{orderInfo.remains}
                     </span>
                   )}
@@ -66,9 +73,11 @@ export const OrderCardUI: FC<OrderCardUIProps> = memo(
               );
             })}
           </ul>
-          
+
           <div>
-            <span className={`text text_type_digits-default pr-1 ${styles.order_total}`}>
+            <span
+              className={`text text_type_digits-default pr-1 ${styles.order_total}`}
+            >
               {orderInfo.total}
             </span>
             <CurrencyIcon type='primary' />
