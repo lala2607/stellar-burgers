@@ -1,0 +1,57 @@
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { TIngredient } from '@utils-types';
+import { getIngredientsApi } from '@api';
+
+export interface IngredientsState {
+  items: TIngredient[];
+  isLoading: boolean;
+  error: string | null;
+}
+
+export const initialState: IngredientsState = {
+  items: [],
+  isLoading: false,
+  error: null
+};
+
+export const fetchIngredients = createAsyncThunk(
+  'ingredients/fetchIngredients',
+  async () => {
+    const data = await getIngredientsApi();
+    return data;
+  }
+);
+
+const ingredientsSlice = createSlice({
+  name: 'ingredients',
+  initialState,
+  reducers: {
+    // Добавил редьюсеры для ручного управления
+    clearIngredientsError: (state) => {
+      state.error = null;
+    },
+    setIngredientsLoading: (state, action) => {
+      state.isLoading = action.payload;
+    }
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchIngredients.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchIngredients.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.items = action.payload;
+      })
+      .addCase(fetchIngredients.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error.message || 'Ошибка загрузки ингредиентов';
+      });
+  }
+});
+
+// Экспорт новых редьюсеров
+export const { clearIngredientsError, setIngredientsLoading } =
+  ingredientsSlice.actions;
+export default ingredientsSlice.reducer;
