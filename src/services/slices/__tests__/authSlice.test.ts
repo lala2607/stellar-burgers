@@ -22,9 +22,20 @@ jest.mock('../../../utils/cookie', () => ({
   getCookie: jest.fn(() => null)
 }));
 
+const TEST_USER_EMAIL = 'test@example.com';
+const TEST_USER_NAME = 'Test User';
+const TEST_ERROR_MESSAGE = 'Ошибка';
+
+const PENDING_TYPE = '.pending';
+const FULFILLED_TYPE = '.fulfilled'; 
+const REJECTED_TYPE = '.rejected';
+
+const API_MOCK_PATH = '@api';
+const COOKIE_UTILS_PATH = '../../../utils/cookie';
+
 const mockUser: TUser = {
-  email: 'test@example.com',
-  name: 'Test User'
+  email: TEST_USER_EMAIL,
+  name: TEST_USER_NAME
 };
 
 describe('authSlice', () => {
@@ -35,7 +46,7 @@ describe('authSlice', () => {
 
   it('clearError должен очищать ошибку', () => {
     const state = authReducer(
-      { ...initialState, error: 'Ошибка' },
+      { ...initialState, error: TEST_ERROR_MESSAGE },
       clearError()
     );
     expect(state.error).toBeNull();
@@ -64,10 +75,10 @@ describe('authSlice', () => {
         initialState,
         {
           type: loginUser.rejected.type,
-          error: { message: 'Ошибка' }
+          error: { message: TEST_ERROR_MESSAGE }
         }
       );
-      expect(state.error).toBe('Ошибка');
+      expect(state.error).toBe(TEST_ERROR_MESSAGE);
       expect(state.isAuthenticated).toBe(false);
     });
   });
@@ -95,10 +106,10 @@ describe('authSlice', () => {
         initialState,
         {
           type: registerUser.rejected.type,
-          error: { message: 'Ошибка' }
+          error: { message: TEST_ERROR_MESSAGE }
         }
       );
-      expect(state.error).toBe('Ошибка');
+      expect(state.error).toBe(TEST_ERROR_MESSAGE);
     });
   });
 
@@ -136,7 +147,7 @@ describe('authSlice', () => {
         initialState,
         {
           type: checkUserAuth.rejected.type,
-          error: { message: 'Ошибка' }
+          error: { message: TEST_ERROR_MESSAGE }
         }
       );
       expect(state.user).toBeNull();

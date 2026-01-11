@@ -10,9 +10,16 @@ jest.mock('@api', () => ({
   getUserApi: jest.fn()
 }));
 
+const TEST_USER_EMAIL = 'test@example.com';
+const TEST_USER_NAME = 'Test User';
+const TEST_ERROR_MESSAGE = 'Ошибка';
+const DEFAULT_ERROR_MESSAGE = 'Ошибка загрузки данных пользователя';
+
+const API_MOCK_PATH = '@api';
+
 const mockUser: TUser = {
-  email: 'test@example.com',
-  name: 'Test User'
+  email: TEST_USER_EMAIL,
+  name: TEST_USER_NAME
 };
 
 describe('userSlice', () => {
@@ -43,11 +50,11 @@ describe('userSlice', () => {
         initialState,
         {
           type: fetchUser.rejected.type,
-          error: { message: 'Ошибка' }
+          error: { message: TEST_ERROR_MESSAGE }
         }
       );
       expect(state.isLoading).toBe(false);
-      expect(state.error).toBe('Ошибка');
+      expect(state.error).toBe(TEST_ERROR_MESSAGE);
     });
 
     it('rejected без message должен использовать дефолтную ошибку', () => {
@@ -58,7 +65,8 @@ describe('userSlice', () => {
           error: {}
         }
       );
-      expect(state.error).toBe('Ошибка загрузки данных пользователя');
+      expect(state.isLoading).toBe(false);
+      expect(state.error).toBe(DEFAULT_ERROR_MESSAGE);
     });
   });
 

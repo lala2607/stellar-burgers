@@ -10,14 +10,24 @@ jest.mock('@api', () => ({
   orderBurgerApi: jest.fn()
 }));
 
+const TEST_ERROR_MESSAGE = 'Ошибка';
+
+const ORDER_ID = '1';
+const ORDER_STATUS = 'done';
+const ORDER_NAME = 'Бургер';
+const ORDER_DATE = '2023-01-01';
+const ORDER_NUMBER = 1;
+
+const API_MOCK_PATH = '@api';
+
 const mockOrder: TOrder = {
-  _id: '1',
+  _id: ORDER_ID,
   ingredients: [],
-  status: 'done',
-  name: 'Бургер',
-  createdAt: '2023-01-01',
-  updatedAt: '2023-01-01',
-  number: 1
+  status: ORDER_STATUS,
+  name: ORDER_NAME,
+  createdAt: ORDER_DATE,
+  updatedAt: ORDER_DATE,
+  number: ORDER_NUMBER
 };
 
 describe('orderModalSlice', () => {
@@ -48,7 +58,7 @@ describe('orderModalSlice', () => {
         initialState,
         {
           type: createOrder.rejected.type,
-          error: { message: 'Ошибка' }
+          error: { message: TEST_ERROR_MESSAGE }
         }
       );
       expect(state.orderRequest).toBe(false);

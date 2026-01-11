@@ -11,16 +11,26 @@ jest.mock('@api', () => ({
   getIngredientsApi: jest.fn()
 }));
 
+const TEST_ERROR_MESSAGE = 'Ошибка';
+const DEFAULT_ERROR_MESSAGE = 'Ошибка загрузки ингредиентов';
+
+const INGREDIENT_ID = '1';
+const INGREDIENT_NAME = 'Булка';
+const INGREDIENT_TYPE = 'bun';
+const INGREDIENT_PRICE = 100;
+
+const API_MOCK_PATH = '@api';
+
 const mockIngredients: TIngredient[] = [
   {
-    _id: '1',
-    name: 'Булка',
-    type: 'bun',
+    _id: INGREDIENT_ID,
+    name: INGREDIENT_NAME,
+    type: INGREDIENT_TYPE,
     proteins: 0,
     fat: 0,
     carbohydrates: 0,
     calories: 0,
-    price: 100,
+    price: INGREDIENT_PRICE,
     image: '',
     image_mobile: '',
     image_large: ''
@@ -38,7 +48,7 @@ describe('ingredientsSlice', () => {
 
   it('clearIngredientsError должен очищать ошибку', () => {
     const state = ingredientsReducer(
-      { ...initialState, error: 'Ошибка' },
+      { ...initialState, error: TEST_ERROR_MESSAGE },
       clearIngredientsError()
     );
     expect(state.error).toBeNull();
@@ -76,11 +86,11 @@ describe('ingredientsSlice', () => {
         initialState,
         {
           type: fetchIngredients.rejected.type,
-          error: { message: 'Ошибка' }
+          error: { message: TEST_ERROR_MESSAGE }
         }
       );
       expect(state.isLoading).toBe(false);
-      expect(state.error).toBe('Ошибка');
+      expect(state.error).toBe(TEST_ERROR_MESSAGE);
       expect(state.items).toEqual([]);
     });
 
@@ -92,7 +102,8 @@ describe('ingredientsSlice', () => {
           error: {}
         }
       );
-      expect(state.error).toBe('Ошибка загрузки ингредиентов');
+      expect(state.isLoading).toBe(false);
+      expect(state.error).toBe(DEFAULT_ERROR_MESSAGE);
     });
   });
 });

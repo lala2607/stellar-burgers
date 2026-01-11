@@ -7,15 +7,31 @@ import constructorReducer, {
 } from '../burgerConstructorSlice';
 import { TIngredient, TConstructorIngredient } from '@utils-types';
 
+const BUN_ID_1 = 'bun-1';
+const BUN_ID_2 = 'bun-2';
+const MAIN_ID = 'main-1';
+const SAUCE_ID = 'sauce-1';
+const MAIN_INSTANCE_ID = '1';
+const SAUCE_INSTANCE_ID = '2';
+
+const INGREDIENT_NAME = 'Булка';
+const INGREDIENT_TYPE_BUN = 'bun';
+const INGREDIENT_TYPE_MAIN = 'main';
+const INGREDIENT_TYPE_SAUCE = 'sauce';
+
+const BUN_PRICE = 100;
+const MAIN_PRICE = 50;
+const SAUCE_PRICE = 30;
+
 const mockBun: TIngredient = {
-  _id: 'bun-1',
-  name: 'Булка',
-  type: 'bun',
+  _id: BUN_ID_1,
+  name: INGREDIENT_NAME,
+  type: INGREDIENT_TYPE_BUN,
   proteins: 0,
   fat: 0,
   carbohydrates: 0,
   calories: 0,
-  price: 100,
+  price: BUN_PRICE,
   image: '',
   image_mobile: '',
   image_large: ''
@@ -23,18 +39,18 @@ const mockBun: TIngredient = {
 
 const mockMain: TConstructorIngredient = {
   ...mockBun,
-  _id: 'main-1',
-  type: 'main',
-  price: 50,
-  id: '1'
+  _id: MAIN_ID,
+  type: INGREDIENT_TYPE_MAIN,
+  price: MAIN_PRICE,
+  id: MAIN_INSTANCE_ID
 };
 
 const mockSauce: TConstructorIngredient = {
   ...mockBun,
-  _id: 'sauce-1',
-  type: 'sauce',
-  price: 30,
-  id: '2'
+  _id: SAUCE_ID,
+  type: INGREDIENT_TYPE_SAUCE,
+  price: SAUCE_PRICE,
+  id: SAUCE_INSTANCE_ID
 };
 
 describe('burgerConstructorSlice', () => {
@@ -42,7 +58,7 @@ describe('burgerConstructorSlice', () => {
     const state1 = constructorReducer(initialState, addIngredient(mockBun));
     expect(state1.bun).toEqual(mockBun);
 
-    const newBun = { ...mockBun, _id: 'bun-2' };
+    const newBun = { ...mockBun, _id: BUN_ID_2 };
     const state2 = constructorReducer(state1, addIngredient(newBun));
     expect(state2.bun).toEqual(newBun);
   });
@@ -58,9 +74,9 @@ describe('burgerConstructorSlice', () => {
     const state2 = constructorReducer(state1, addIngredient(mockSauce));
     expect(state2.ingredients).toHaveLength(2);
 
-    const state3 = constructorReducer(state2, removeIngredient('1'));
+    const state3 = constructorReducer(state2, removeIngredient(MAIN_INSTANCE_ID));
     expect(state3.ingredients).toHaveLength(1);
-    expect(state3.ingredients[0].id).toBe('2');
+    expect(state3.ingredients[0].id).toBe(SAUCE_INSTANCE_ID);
   });
 
   it('moveIngredient должен перемещать ингредиенты', () => {
@@ -72,8 +88,8 @@ describe('burgerConstructorSlice', () => {
       moveIngredient({ dragIndex: 0, hoverIndex: 1 })
     );
     
-    expect(state3.ingredients[0].id).toBe('2');
-    expect(state3.ingredients[1].id).toBe('1');
+    expect(state3.ingredients[0].id).toBe(SAUCE_INSTANCE_ID);
+    expect(state3.ingredients[1].id).toBe(MAIN_INSTANCE_ID);
   });
 
   it('clearConstructor должен очищать всё', () => {

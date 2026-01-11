@@ -6,18 +6,32 @@ jest.mock('@api', () => ({
   getFeedsApi: jest.fn()
 }));
 
+const TEST_ERROR_MESSAGE = 'Ошибка';
+const DEFAULT_ERROR_MESSAGE = 'Ошибка загрузки ленты заказов';
+
+const ORDER_ID = '1';
+const ORDER_STATUS = 'done';
+const ORDER_NAME = 'Бургер';
+const ORDER_DATE = '2023-01-01';
+const ORDER_NUMBER = 1;
+
+const TOTAL_ORDERS = 100;
+const TOTAL_TODAY = 10;
+
+const API_MOCK_PATH = '@api';
+
 const mockData: TOrdersData = {
   orders: [{
-    _id: '1',
+    _id: ORDER_ID,
     ingredients: [],
-    status: 'done',
-    name: 'Бургер',
-    createdAt: '2023-01-01',
-    updatedAt: '2023-01-01',
-    number: 1
+    status: ORDER_STATUS,
+    name: ORDER_NAME,
+    createdAt: ORDER_DATE,
+    updatedAt: ORDER_DATE,
+    number: ORDER_NUMBER
   }],
-  total: 100,
-  totalToday: 10
+  total: TOTAL_ORDERS,
+  totalToday: TOTAL_TODAY
 };
 
 describe('feedSlice', () => {
@@ -48,11 +62,11 @@ describe('feedSlice', () => {
       initialState,
       {
         type: fetchFeeds.rejected.type,
-        error: { message: 'Ошибка' }
+        error: { message: TEST_ERROR_MESSAGE }
       }
     );
     expect(state.isLoading).toBe(false);
-    expect(state.error).toBe('Ошибка');
+    expect(state.error).toBe(TEST_ERROR_MESSAGE);
   });
 
   it('rejected без message должен использовать дефолтную ошибку', () => {
@@ -63,6 +77,7 @@ describe('feedSlice', () => {
         error: {}
       }
     );
-    expect(state.error).toBe('Ошибка загрузки ленты заказов');
+    expect(state.isLoading).toBe(false);
+    expect(state.error).toBe(DEFAULT_ERROR_MESSAGE);
   });
 });
